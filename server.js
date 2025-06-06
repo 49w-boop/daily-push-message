@@ -24,7 +24,10 @@ app.get('/wechat', (req, res) => {
 });
 // 使用 express.text() 解析 XML 数据
 app.post('/wechat', express.text({ type: 'application/xml' }), async (req, res) => {
-  console.log('Received request body:', req.body); // 添加请求体日志
+  console.log('请求头:', req.headers);
+  console.log('Content-Type:', req.headers['content-type']);
+  console.log('请求体长度:', req.headers['content-length']);
+  console.log('Received request body:', req.body);
 
   if (!req.body) {
     console.error('Empty request body');
