@@ -24,22 +24,33 @@ app.get('/wechat', (req, res) => {
 });
 
 // 处理消息
-app.post('/wechat', express.text({ type: 'application/xml' }), async (req, res) => {
+app.post('/wechat', bodyParser.text({ type: 'application/xml' }), async (req, res) => {
   parseString(req.body, async (err, result) => {
-    if (err) return res.status(400).send('Invalid XML');
+    if (err) {
+      console.error('XML 解析失败:', err);
+      return res.status(400).send('Invalid XML');
+    }
 
     const { xml } = result;
-    const msgType = xml.MsgType[0];
-    const fromUser = xml.FromUserName[0];
-    const toUser = xml.ToUserName[0];
-console.log('xml',xml);
+
+    // 检查必要的字段是否存在
+    const msgType = xml.MsgType?.[0];
+    const fromUser = xml.FromUserName?.[0];
+    const toUser = xml.ToUserName?.[0];
+
+    if (!msgType || !fromUser || !toUser) {
+      console.error('缺少必要的字段:', xml);
+      return res.status(400).send('Invalid XML');
+    }
+
+    console.log('xml', xml);
 
     if (msgType === 'text') {
-      const userText = xml.Content[0].trim();
+      const userText = xml.Content?.[0]?.trim();
       let replyText;
 
       // 检查是否为关键词
-      if (keywordResponses[userText]) {
+      if (userText && keywordResponses[userText]) {
         replyText = typeof keywordResponses[userText] === 'function'
           ? keywordResponses[userText]()
           : keywordResponses[userText];
@@ -58,6 +69,10 @@ console.log('xml',xml);
         </xml>
       `;
       res.type('application/xml').send(replyXml);
+    } else {
+      // 其他消息类型
+      console.log('收到消息:', xml);
+      res.send('success');
     }
   });
 });
