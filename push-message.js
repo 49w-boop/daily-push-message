@@ -1,8 +1,8 @@
 const axios = require('axios');
 
 // 从环境变量中获取配置
-const APP_ID = process.env.APP_ID;
-const APP_SECRET = process.env.APP_SECRET;
+const APP_ID = 'wx22228a1ac8bb90b3';
+const APP_SECRET = '688f6c83f6399364f5d14059b62f3fe7';
 
 // 获取 Access Token
 async function getAccessToken() {
@@ -13,6 +13,8 @@ async function getAccessToken() {
       secret: APP_SECRET,
     },
   });
+  console.log(response);
+
   return response.data.access_token;
 }
 
