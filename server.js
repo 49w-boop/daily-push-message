@@ -62,6 +62,46 @@ console.log('xml',xml);
   });
 });
 
+// 从环境变量中获取配置
+const APP_ID = 'wx22228a1ac8bb90b3';
+const APP_SECRET = '688f6c83f6399364f5d14059b62f3fe7';
+
+// 获取 Access Token
+async function getAccessToken() {
+  const response = await axios.get('https://api.weixin.qq.com/cgi-bin/token', {
+    params: {
+      grant_type: 'client_credential',
+      appid: APP_ID,
+      secret: APP_SECRET,
+    },
+  });
+  console.log(response);
+
+  return response.data.access_token;
+}
+// 发送消息
+async function sendMenu() {
+  let accessToken=await  getAccessToken()
+    const message ={
+        "button":[
+        {
+             "type":"click",
+             "name":"今日天气",
+             "key":"click_1"
+         },
+         {
+            "type":"click",
+            "name":"今日运势",
+            "key":"click_2"
+        },
+        ]
+    }
+    await axios.post(`https://api.weixin.qq.com/cgi-bin/menu/create?access_token=${accessToken}`, message);
+  }
+
+
+
+
 // 校验签名
 function isValidWeChatSignature(signature, timestamp, nonce, token) {
   const crypto = require('crypto');
@@ -70,4 +110,7 @@ function isValidWeChatSignature(signature, timestamp, nonce, token) {
   return sha1 === signature;
 }
 
-app.listen(PORT, () => console.log(`Server running on http://101.42.101.250:${PORT}`));
+app.listen(PORT, () =>{
+    sendMenu()
+    console.log(`Server running on http://101.42.101.250:${PORT}`)
+});
