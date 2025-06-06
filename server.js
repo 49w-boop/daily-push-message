@@ -22,9 +22,8 @@ app.get('/wechat', (req, res) => {
     res.status(403).send('Invalid signature');
   }
 });
-
-// 处理消息
-app.post('/wechat', bodyParser.text({ type: 'application/xml' }), async (req, res) => {
+// 使用 express.text() 解析 XML 数据
+app.post('/wechat', express.text({ type: 'application/xml' }), async (req, res) => {
   parseString(req.body, async (err, result) => {
     if (err) {
       console.error('XML 解析失败:', err);
@@ -32,16 +31,9 @@ app.post('/wechat', bodyParser.text({ type: 'application/xml' }), async (req, re
     }
 
     const { xml } = result;
-
-    // 检查必要的字段是否存在
     const msgType = xml.MsgType?.[0];
     const fromUser = xml.FromUserName?.[0];
     const toUser = xml.ToUserName?.[0];
-
-    if (!msgType || !fromUser || !toUser) {
-      console.error('缺少必要的字段:', xml);
-      return res.status(400).send('Invalid XML');
-    }
 
     console.log('xml', xml);
 
@@ -58,7 +50,7 @@ app.post('/wechat', bodyParser.text({ type: 'application/xml' }), async (req, re
         replyText = `你发送了：${userText}`;
       }
 
-      // 返回XML
+      // 返回 XML
       const replyXml = `
         <xml>
           <ToUserName><![CDATA[${fromUser}]]></ToUserName>
@@ -76,6 +68,7 @@ app.post('/wechat', bodyParser.text({ type: 'application/xml' }), async (req, re
     }
   });
 });
+
 
 // 从环境变量中获取配置
 const APP_ID = 'wx22228a1ac8bb90b3';
