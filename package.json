@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "node push-message.js"
+    "dev": "node push-message.js",
+    "server": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "axios": "^1.9.0"
+    "axios": "^1.9.0",
+    "express": "^5.1.0",
+    "xml2js": "^0.6.2"
   }
 }
